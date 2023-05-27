@@ -1,0 +1,272 @@
+{
+  "components": {
+    "examples": {},
+    "headers": {},
+    "parameters": {},
+    "requestBodies": {},
+    "responses": {},
+    "schemas": {
+      "HealthStatus": {
+        "type": "string",
+        "enum": ["green", "GREEN", "yellow", "YELLOW", "red", "RED"]
+      },
+      "Pick_ClusterHealthResponse.status_": {
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/HealthStatus"
+          }
+        },
+        "required": ["status"],
+        "type": "object",
+        "description": "From T, pick a set of properties whose keys are in the union K"
+      },
+      "Task": {
+        "properties": {
+          "completed": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TaskRequest": {
+        "properties": {
+          "completed": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": ["title"],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "name": "access_token",
+        "in": "query"
+      },
+      "jwt": {
+        "scopes": {
+          "lists:read": "read lists",
+          "lists:write": "modify lists",
+          "tasks:read": "read tasks",
+          "tasks:write": "modify tasks",
+          "users:read": "read users",
+          "users:write": "modify users"
+        }
+      }
+    }
+  },
+  "info": {
+    "title": "@express/elastic",
+    "version": "0.0.1",
+    "description": "express.js - elastic",
+    "license": {
+      "name": "GNU GPL 3.0"
+    },
+    "contact": {
+      "name": "hieudoanm ",
+      "email": "hieumdoan@gmail.com"
+    }
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "GetHealth",
+        "responses": {
+          "Health Check": {
+            "description": "Health Check",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pick_ClusterHealthResponse.status_"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Health"],
+        "security": [],
+        "parameters": []
+      }
+    },
+    "/tasks": {
+      "get": {
+        "operationId": "GetTasks",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Task"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Tasks"],
+        "security": [
+          {
+            "jwt": ["tasks:read"]
+          }
+        ],
+        "parameters": []
+      },
+      "post": {
+        "operationId": "CreateTask",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Tasks"],
+        "security": [
+          {
+            "jwt": ["tasks:write"]
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{id}": {
+      "get": {
+        "operationId": "GetTask",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Tasks"],
+        "security": [
+          {
+            "jwt": ["tasks:read"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "UpdateTask",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Tasks"],
+        "security": [
+          {
+            "jwt": ["tasks:write"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskRequest"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "DeleteTask",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "tags": ["Tasks"],
+        "security": [
+          {
+            "jwt": ["tasks:write"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local"
+    }
+  ]
+}
