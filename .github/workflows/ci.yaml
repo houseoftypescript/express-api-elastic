@@ -9,8 +9,8 @@ on:
       - renovate/**
 
 jobs:
-  cd:
-    name: CD
+  ci:
+    name: CI
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
