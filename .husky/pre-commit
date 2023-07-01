@@ -2,6 +2,5 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 yarn lint
-yarn pretty-quick --staged
 yarn prettier . --write
 git add -A
